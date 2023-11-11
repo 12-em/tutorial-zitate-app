@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Zitate</string>
+    <string name="welcome_text">Hallo Welt, der zweite\n</string>
+    <string name="text_button_activity_main">Hole Daten</string>
+
+    <string name="sample_author">Johann Wolfgang v. Goethe</string>
+    <string name="sample_quote">Das sicherste Mittel, ein freundschaftliches Verhältnis
+        zu hegen und zu erhalten, finde ich darin, daß man sich wechselweise mitteile,
+        was man tut. Denn die Menschen treffen viel mehr zusammen in dem, was sie tun,
+        als in dem, was sie denken.</string>
+    <string name="author_image_description">Author image</string>
+</resources>
