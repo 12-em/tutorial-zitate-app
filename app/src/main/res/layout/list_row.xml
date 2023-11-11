@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     style="?attr/materialCardViewFilledStyle"
-    android:layout_margin="@dimen/row_padding">
+    android:layout_margin="@dimen/row_padding"
+    android:layout_marginBottom="@dimen/row_padding">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
