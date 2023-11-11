@@ -10,4 +10,7 @@
         als in dem, was sie denken.</string>
     <string name="author_image_description">Author image</string>
     <string name="close">Schließen</string>
+    <string name="settings">Einstellungen</string>
+    <string name="settings_placeholder">Settings placeholder</string>
+    <string name="snackbar_finished_loading">Daten erfolgreich geladen</string>
 </resources>

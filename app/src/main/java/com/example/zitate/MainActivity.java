@@ -2,15 +2,19 @@ package com.example.zitate;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.zitate.model.Quote;
 import com.example.zitate.model.QuoteArrayAdapter;
@@ -25,8 +29,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private List<Quote> mQuoteList;
     private ListView mListView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
     private QuoteArrayAdapter mQuoteArrayAdapter;
-    private Button mRefreshDataButton;
 
     private LinearLayout mLayoutRoot;
     @Override
@@ -43,15 +48,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mLayoutRoot = findViewById(R.id.layout_root);
-
         mListView = findViewById(R.id.zitate_list);
-        mRefreshDataButton = findViewById(R.id.button_refresh);
+        mSwipeRefreshLayout = findViewById(R.id.swiperefresh);
 
         setupSampleStrings();
         bindAdapter();
 
-        registerButtonListener();
         registerListViewClickListener();
+
+        mSwipeRefreshLayout.setOnRefreshListener(this::refreshListView);
     }
 
     private void registerListViewClickListener() {
@@ -75,15 +80,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void registerButtonListener() {
-        mRefreshDataButton.setOnClickListener(v -> {
-            refreshListView();
-        });
-    }
-
     private void refreshListView() {
+        mSwipeRefreshLayout.setRefreshing(true);
+
+        // do something
         Collections.shuffle(mQuoteList);
         mQuoteArrayAdapter.notifyDataSetChanged();
+
+        // done
+        mSwipeRefreshLayout.setRefreshing(false);
+        Snackbar.make(mLayoutRoot, R.string.snackbar_finished_loading, Snackbar.LENGTH_SHORT).show();
     }
 
     private void setupSampleStrings() {
@@ -107,5 +113,32 @@ public class MainActivity extends AppCompatActivity {
     private void bindAdapter() {
         mQuoteArrayAdapter = new QuoteArrayAdapter(this, mQuoteList);
         mListView.setAdapter(mQuoteArrayAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.top_app_bar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_get_data) {
+            refreshListView();
+            // refresh yourself now
+            return true;
+        }
+        else if (id == R.id.action_settings) {
+            // TODO implement settings
+            Snackbar.make(mLayoutRoot, R.string.settings_placeholder, Snackbar.LENGTH_LONG).show();
+            // settings
+            return true;
+        }
+        else {
+            // default
+            return super.onOptionsItemSelected(item);
+        }
     }
 }
