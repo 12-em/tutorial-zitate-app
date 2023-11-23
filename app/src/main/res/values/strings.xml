@@ -13,4 +13,5 @@
     <string name="settings">Einstellungen</string>
     <string name="settings_placeholder">Settings placeholder</string>
     <string name="snackbar_finished_loading">Daten erfolgreich geladen</string>
+    <string name="asyncdone">Async done</string>
 </resources>

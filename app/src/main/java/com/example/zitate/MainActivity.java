@@ -1,7 +1,9 @@
 package com.example.zitate;
 
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
@@ -27,6 +29,56 @@ import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private class RequestQuotesTask extends AsyncTask<Integer, String, List<Quote>> {
+        private final String INNER_TAG = RequestQuotesTask.class.getSimpleName();
+
+        @Override
+        protected List<Quote> doInBackground(Integer... intParams) {
+
+            int quotesCount = intParams[0];
+            int parsingMethod = intParams[1];
+            List<Quote> newQuoteList = new ArrayList<>();
+
+            publishProgress("Bitte warten! " + quotesCount + " Zitate werden geladen.");
+
+            for (int i = 0; i < quotesCount; i++) {
+                // Mit Thread.sleep(350) simulieren wir eine Wartezeit von 350 ms
+                // Dann fügen wir ein Quote-Objekt in die neue Zitat-Liste ein
+                try {
+                    Thread.sleep(350);
+                    newQuoteList.add(new Quote(getString(R.string.sample_quote),
+                            getString(R.string.sample_author), "goethe"));
+                } catch (Exception e) {
+                    Log.e(INNER_TAG, "Thread-Error in inner class.", e);
+                }
+            }
+
+            publishProgress(newQuoteList.size() + " Zitate wuden erfolgreich geladen.");
+
+            return newQuoteList;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... stringParams) {
+            // Auf dem Bildschirm geben wir eine Statusmeldung aus, immer wenn
+            // publishProgress() von doInBackground() aufgerufen wird
+            String message = stringParams[0];
+            Snackbar.make(mLayoutRoot, message, Snackbar.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected void onPostExecute(List<Quote> receivedQuoteList) {
+            // Die Datenquelle wird mit den in der doInBackground() Methode erstellten Daten gefüllt
+            // und der Adapter wird informiert, dass sich der Inhalt seiner Datenquelle geändert hat
+            mQuoteList.clear();
+            mQuoteList.addAll(receivedQuoteList);
+            mQuoteArrayAdapter.notifyDataSetChanged();
+
+            // Das SwipeRefreshLayout wird angewiesen die Fortschrittsanzeige wieder auszublenden
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
     private List<Quote> mQuoteList;
     private ListView mListView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -83,13 +135,8 @@ public class MainActivity extends AppCompatActivity {
     private void refreshListView() {
         mSwipeRefreshLayout.setRefreshing(true);
 
-        // do something
-        Collections.shuffle(mQuoteList);
-        mQuoteArrayAdapter.notifyDataSetChanged();
-
-        // done
-        mSwipeRefreshLayout.setRefreshing(false);
-        Snackbar.make(mLayoutRoot, R.string.snackbar_finished_loading, Snackbar.LENGTH_SHORT).show();
+        RequestQuotesTask requestQuotesTask = new RequestQuotesTask();
+        requestQuotesTask.execute(10,0);
     }
 
     private void setupSampleStrings() {
